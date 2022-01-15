@@ -1,0 +1,12 @@
+version: '3'
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.21.0
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/index.html:/usr/share/nginx/html/index.html
