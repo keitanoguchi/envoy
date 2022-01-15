@@ -35,10 +35,15 @@ static_resources:
                             prefix_rewrite: "/"
                             cluster: envoy_admin
                         - match:
-                            prefix: "/nginx"
+                            prefix: "/api"
                           route:
                             prefix_rewrite: "/"
+                            cluster: fast_api
+                        - match:
+                            prefix: "/"
+                          route:
                             cluster: nginx
+
   clusters:
     - name: envoy_admin
       type: LOGICAL_DNS
@@ -66,3 +71,16 @@ static_resources:
                     socket_address:
                       address: nginx
                       port_value: 80
+    - name: fast_api
+      type: LOGICAL_DNS
+      # Comment out the following line to test on v6 networks
+      dns_lookup_family: V4_ONLY
+      load_assignment:
+        cluster_name: fast_api
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: fast-api
+                      port_value: 8000

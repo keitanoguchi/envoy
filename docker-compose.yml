@@ -1,12 +1,34 @@
 version: '3'
 services:
   envoy:
+    container_name: envoy
     image: envoyproxy/envoy:v1.21.0
+    command: [ "envoy", "-c", "/etc/envoy/envoy.yaml" ]
     ports:
       - "10000:10000"
     volumes:
       - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
   nginx:
+    container_name: nginx
     image: nginx:alpine
     volumes:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
+  fast-api:
+    container_name: fast-api
+    build:
+      context: ./fast-api
+      dockerfile: ./Dockerfile
+    image: fast-api
+    working_dir: /app
+    command:
+      [
+        "uvicorn",
+        "main:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ]
+    volumes:
+      - ./fast-api/app/:/app/
